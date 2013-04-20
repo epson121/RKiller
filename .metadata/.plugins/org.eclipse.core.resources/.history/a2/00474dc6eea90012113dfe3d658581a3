@@ -1,0 +1,51 @@
+package com.agame.rkiller;
+
+import android.graphics.Rect;
+
+public class Roach {
+
+	private int speedX, speedY, centerX, centerY, health;
+	private Rect r = new Rect(0, 0, 0, 0);
+	public int getSpeedX() {
+		return speedX;
+	}
+
+	public void setSpeedX(int speedX) {
+		this.speedX = speedX;
+	}
+
+	public int getSpeedY() {
+		return speedY;
+	}
+
+	public void setSpeedY(int speedY) {
+		this.speedY = speedY;
+	}
+
+	public int getCenterX() {
+		return centerX;
+	}
+
+	public void setCenterX(int centerX) {
+		this.centerX = centerX;
+	}
+
+	public int getCenterY() {
+		return centerY;
+	}
+
+	public void setCenterY(int centerY) {
+		this.centerY = centerY;
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	
+	
+	
+}

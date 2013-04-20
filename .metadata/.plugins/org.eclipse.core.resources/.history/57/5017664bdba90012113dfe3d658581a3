@@ -1,0 +1,16 @@
+package com.agame.rkiller;
+
+import com.agame.framework.Screen;
+import com.agame.framework.impl.AndroidGame;
+
+public class RKiller extends AndroidGame {
+	
+	@Override
+	public Screen getInitScreen() {
+		// TODO Auto-generated method stub
+		return super.getInitScreen();
+	}
+	
+	
+	
+}

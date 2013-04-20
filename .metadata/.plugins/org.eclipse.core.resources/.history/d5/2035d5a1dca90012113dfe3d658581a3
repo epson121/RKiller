@@ -1,0 +1,31 @@
+package com.agame.rkiller;
+
+import com.agame.framework.Screen;
+import com.agame.framework.impl.AndroidGame;
+
+public class RKiller extends AndroidGame {
+	
+	@Override
+	public Screen getInitScreen() {
+		// TODO Auto-generated method stub
+		return super.getInitScreen();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+	}
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+	}
+	
+	
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+}

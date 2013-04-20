@@ -1,0 +1,9 @@
+package com.agame.rkiller;
+
+import com.agame.framework.Image;
+
+public class Assets {
+
+	public static Image background;
+	
+}

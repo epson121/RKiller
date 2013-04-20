@@ -1,0 +1,59 @@
+package com.agame.rkiller;
+
+import com.agame.framework.Game;
+import com.agame.framework.Screen;
+
+public class GameScreen extends Screen {
+	
+	enum GameState {
+		Ready, Running, Paused, GameOver
+	}
+	
+	GameState state = GameState.Ready;
+	private static Background b1;
+	private static Roach r;
+	
+	public GameScreen(Game game) {
+		super(game);
+		
+		//initialize game objects
+		
+	}
+
+	@Override
+	public void update(float deltaTime) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void paint(float deltaTime) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void backButton() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

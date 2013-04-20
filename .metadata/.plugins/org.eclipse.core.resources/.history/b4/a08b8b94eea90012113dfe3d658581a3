@@ -1,0 +1,9 @@
+package com.agame.rkiller;
+
+public class Roach {
+
+	private int speedX, speedY, centerX, centerY, health;
+	
+	
+	
+}

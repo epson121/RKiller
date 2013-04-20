@@ -1,0 +1,55 @@
+package com.agame.rkiller;
+
+import android.util.Log;
+
+import com.agame.framework.Game;
+import com.agame.framework.Graphics;
+import com.agame.framework.Graphics.ImageFormat;
+import com.agame.framework.Screen;
+
+public class SplashLoadingScreen extends Screen {
+
+	public SplashLoadingScreen(Game game) {
+		super(game);
+	}
+
+	@Override
+	public void update(float deltaTime) {
+		Log.d("APP", "Splash1");
+		Graphics g = game.getGraphics();
+        Assets.splash= g.newImage("splash.jpg", ImageFormat.RGB565);
+        Log.d("APP", "Splash2");
+        game.setScreen(new LoadingScreen(game));
+        
+	}
+
+	@Override
+	public void paint(float deltaTime) {
+		
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void backButton() {
+		// TODO Auto-generated method stub
+		
+	}
+		
+}

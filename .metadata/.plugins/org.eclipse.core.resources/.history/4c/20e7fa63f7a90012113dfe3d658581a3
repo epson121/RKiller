@@ -1,0 +1,142 @@
+package com.agame.rkiller;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import com.agame.framework.Game;
+import com.agame.framework.Graphics;
+import com.agame.framework.Image;
+import com.agame.framework.Input.TouchEvent;
+import com.agame.framework.Screen;
+
+public class GameScreen extends Screen {
+	
+	enum GameState {
+		Ready, Running, Paused, GameOver
+	}
+	GameState state = GameState.Ready;
+	
+	private int randX, randY;
+	private Image roach;
+	private static Background b1;
+	private static List<Roach> roachList = new ArrayList(10);
+	Random rand = new Random();
+	
+	public GameScreen(Game game) {
+		super(game);
+		
+		//initialize game objects
+		b1 = new Background(0, 0);
+		for (int i = 0; i < 10; i++){
+			randX = rand.nextInt(640);
+			randY = rand.nextInt(480);
+			roachList.get(i) = new Roach(randX, randY);
+		}
+		roach = Assets.character_alive;
+		
+	}
+
+	@Override
+	public void update(float deltaTime) {
+		List touchEvents = game.getInput().getTouchEvents();
+		if (touchEvents.size() > 0){
+			for (int i = 0; i < touchEvents.size(); i++){
+				TouchEvent event = (TouchEvent) touchEvents.get(i);
+				if (event.type == TouchEvent.TOUCH_DOWN){
+					if (inBounds(event, roachList)){
+						//kill a roach
+					}
+					else{
+						//update roach
+					}
+				}
+			}
+		}
+		else{
+			//update roach
+		}
+
+	}
+	
+	private boolean inBounds(TouchEvent event, Roach[] roachList ){
+		int xLeft, xRight, yUp, yDown;
+		
+		for (int i = 0; i < roachList.length; i++){
+			xLeft = roachList[i].getCenterX() - 25;
+			xRight = roachList[i].getCenterX() + 25;
+			yUp = roachList[i].getCenterY() + 25;
+			yDown = roachList[i].getCenterY() - 25;
+			if (event.x >= xLeft && event.x <= xRight && event.y >= yDown && event.y <= yUp){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void paint(float deltaTime) {
+		Graphics g = game.getGraphics();
+
+		g.drawImage(Assets.background, b1.getBgX(), b1.getBgY());
+		
+		for (roachList)
+		
+		ArrayList projectiles = robot.getProjectiles();
+		for (int i = 0; i < projectiles.size(); i++) {
+			Projectile p = (Projectile) projectiles.get(i);
+			g.drawRect(p.getX(), p.getY(), 10, 5, Color.YELLOW);
+		}
+		// First draw the game elements.
+
+		g.drawImage(currentSprite, robot.getCenterX() - 61,
+				robot.getCenterY() - 63);
+		g.drawImage(hanim.getImage(), hb.getCenterX() - 48,
+				hb.getCenterY() - 48);
+		g.drawImage(hanim.getImage(), hb2.getCenterX() - 48,
+				hb2.getCenterY() - 48);
+
+		// Example:
+		// g.drawImage(Assets.background, 0, 0);
+		// g.drawImage(Assets.character, characterX, characterY);
+
+		// Secondly, draw the UI above the game elements.
+		if (state == GameState.Ready)
+			drawReadyUI();
+		if (state == GameState.Running)
+			drawRunningUI();
+		if (state == GameState.Paused)
+			drawPausedUI();
+		if (state == GameState.GameOver)
+			drawGameOverUI();
+
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void backButton() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

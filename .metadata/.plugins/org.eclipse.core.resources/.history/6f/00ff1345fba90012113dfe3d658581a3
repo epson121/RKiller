@@ -1,0 +1,132 @@
+package com.agame.rkiller;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import android.util.Log;
+
+import com.agame.framework.Game;
+import com.agame.framework.Graphics;
+import com.agame.framework.Image;
+import com.agame.framework.Input.TouchEvent;
+import com.agame.framework.Screen;
+
+public class GameScreen extends Screen {
+	
+	enum GameState {
+		Ready, Running, Paused, GameOver
+	}
+	GameState state = GameState.Ready;
+	
+	private int randX, randY, randSpeedX, randSpeedY;
+	private Image roach;
+	private static Background b1;
+	private static List<Roach> roachList = new ArrayList<Roach>();
+	Random rand = new Random();
+	
+	public GameScreen(Game game) {
+		super(game);
+		
+		//initialize game objects
+		b1 = new Background(0, 0);
+		for (int i = 0; i < 10; i++){
+			randX = rand.nextInt(640);
+			randY = rand.nextInt(480);
+			randSpeedX = rand.nextInt(5);
+			randSpeedY = rand.nextInt(4);
+			roachList.add(new Roach(randX, randY));
+			roachList.get(i).setSpeedX(randSpeedX);
+			roachList.get(i).setSpeedY(randSpeedY);
+		}
+		roach = Assets.character_alive;
+		
+	}
+
+	@Override
+	public void update(float deltaTime) {
+		List touchEvents = game.getInput().getTouchEvents();
+		if (touchEvents.size() > 0){
+			for (int i = 0; i < touchEvents.size(); i++){
+				TouchEvent event = (TouchEvent) touchEvents.get(i);
+				if (event.type == TouchEvent.TOUCH_DOWN){
+					if (inBounds(event, roachList)){
+						Log.d("APP", "Roach dead");
+						roachList.remove(i);
+					}
+					else{
+					}
+				}
+			}
+		}
+		for (int i = 0; i < roachList.size(); i++){
+			Roach r = roachList.get(i);
+			if (r.getCenterX() + 25 >= 640 || r.getCenterX() - 25 <= 0){
+				r.setSpeedX(r.getSpeedX() * -1);
+			}			
+			if (r.getCenterY() - 25 <= 0 || r.getCenterY() + 25 >= 480 ){
+				r.setSpeedY(r.getSpeedY() * -1);
+			}
+			r.update();
+		}
+		b1.update();
+		
+		
+
+	}
+	
+	private boolean inBounds(TouchEvent event, List<Roach> roachList ){
+		int xLeft, xRight, yUp, yDown;
+		
+		for (int i = 0; i < roachList.size(); i++){
+			xLeft = roachList.get(i).getCenterX() - 100;
+			xRight = roachList.get(i).getCenterX() + 100;
+			yUp = roachList.get(i).getCenterY() + 100;
+			yDown = roachList.get(i).getCenterY() - 100;
+			if (event.x >= xLeft && event.x <= xRight && event.y >= yDown && event.y <= yUp){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void paint(float deltaTime) {
+		Graphics g = game.getGraphics();
+
+		g.drawImage(Assets.background, b1.getBgX(), b1.getBgY());
+		
+		for (int i = 0; i < roachList.size(); i++){
+			Roach r = (Roach) roachList.get(i);
+			g.drawImage(roach, r.getCenterX() - 25, r.getCenterY() - 25);
+		}
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void backButton() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

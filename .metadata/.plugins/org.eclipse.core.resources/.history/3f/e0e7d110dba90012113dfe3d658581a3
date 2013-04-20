@@ -1,0 +1,7 @@
+package com.agame.rkiller;
+
+import com.agame.framework.impl.AndroidGame;
+
+public class RKiller extends AndroidGame {
+
+}

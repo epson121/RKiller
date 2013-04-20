@@ -1,0 +1,9 @@
+package com.agame.rkiller;
+
+import com.agame.framework.Screen;
+
+public class SplashLoadingScreen extends Screen {
+	
+	public SplashLoadingScreen()
+	
+}
