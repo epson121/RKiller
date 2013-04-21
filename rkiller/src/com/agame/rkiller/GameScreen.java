@@ -6,6 +6,7 @@ import java.util.Random;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 
 import com.agame.framework.Game;
@@ -24,12 +25,13 @@ public class GameScreen extends Screen {
 	private int randX, randY, randSpeedX, randSpeedY;
 	private Image roach;
 	private static Background b1;
-	private static List<Roach> roachList = new ArrayList<Roach>();
+	private static List<Roach> roachList;
 	Random rand = new Random();
 	Paint paint;
 	public GameScreen(Game game) {
 		super(game);
 		
+		roachList = new ArrayList<Roach>();
 		//initialize game objects
 		b1 = new Background(0, 0);
 		for (int i = 0; i < 5; i++){
@@ -38,9 +40,9 @@ public class GameScreen extends Screen {
 			randSpeedX = rand.nextInt(5) + 1;
 			randSpeedY = rand.nextInt(4) + 1;
 			roachList.add(new Roach(randX, randY));
-			roachList.get(i).setSpeedX(randSpeedX);
-			roachList.get(i).setSpeedY(randSpeedY);
+			roachList.get(i).setSpeed(randSpeedX, randSpeedY);
 		}
+		
 		roach = Assets.character_alive;
 		paint = new Paint();
 		paint.setTextSize(100);
@@ -64,9 +66,14 @@ public class GameScreen extends Screen {
 			for (int i = 0; i < touchEvents.size(); i++){
 				TouchEvent event = (TouchEvent) touchEvents.get(i);
 				if (event.type == TouchEvent.TOUCH_DOWN){
-					if (roachInBounds(event, roachList)){
+					int n = roachInBounds(event, roachList);
+					if (n != -1){
 						Log.d("APP", "Roach dead");
-						roachList.remove(i);
+						roachList.remove(n);
+						if (roachList.size() == 0){
+							endGame();
+							return;
+						}
 					}
 				}
 			}
@@ -97,8 +104,7 @@ public class GameScreen extends Screen {
 						}
 					}
 					if (inBounds(event, 0, 240, 800, 240)) {
-						nullify();
-						goToMenu();
+						endGame();
 					}
 				}
 			}
@@ -114,22 +120,16 @@ public class GameScreen extends Screen {
 			return false;
 	}
 	
-	private boolean roachInBounds(TouchEvent event, List<Roach> roachList ){
-		int xLeft, xRight, yUp, yDown;
+	private int roachInBounds(TouchEvent event, List<Roach> rList ){
 		
-		for (int i = 0; i < roachList.size(); i++){
-			xLeft = roachList.get(i).getCenterX() - 150;
-			xRight = roachList.get(i).getCenterX() + 150;
-			yUp = roachList.get(i).getCenterY() - 150;
-			yDown = roachList.get(i).getCenterY() + 150;
-			if (event.x >= xLeft && event.x <= xRight && event.y <= yDown && event.y >= yUp){
-				return true;
-			}
-			else{
-				return false;
+		for (int i = 0; i < rList.size(); i++){
+			Rect r = new Rect(event.x - 25, event.y - 25, event.x + 25, event.y + 25);
+			
+			if (Rect.intersects(r, rList.get(i).rect)){
+				return i;
 			}
 		}
-		return false;
+		return -1;
 	}
 
 	@Override
@@ -141,6 +141,13 @@ public class GameScreen extends Screen {
 		for (int i = 0; i < roachList.size(); i++){
 			Roach r = (Roach) roachList.get(i);
 			g.drawImage(roach, r.getCenterX() - 25, r.getCenterY() - 25);
+			g.drawRect(r.rect, Color.BLUE);
+		}
+		
+		List touchEvents = game.getInput().getTouchEvents();
+		for (int i = 0; i < touchEvents.size(); i++) {
+			TouchEvent event = (TouchEvent) touchEvents.get(i);
+			g.drawRect(event.x - 25, event.y - 25, 50, 50, Color.YELLOW);
 		}
 		
 		if (state == GameState.Paused)
@@ -178,11 +185,17 @@ public class GameScreen extends Screen {
 		pause();
 	}
 	
+	public void endGame(){
+		nullify();
+		goToMenu();
+	}
+	
 	public void nullify(){
 		b1 = null;
 		state = null;
 		roach = null;
 		paint = null;
+		roachList.clear();
 		
 		System.gc();
 	}

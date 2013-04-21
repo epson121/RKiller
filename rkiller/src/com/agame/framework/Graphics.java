@@ -1,6 +1,7 @@
 package com.agame.framework;
 
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 public interface Graphics {
 	
@@ -15,6 +16,8 @@ public interface Graphics {
 	    public void drawLine(int x, int y, int x2, int y2, int color);
 
 	    public void drawRect(int x, int y, int width, int height, int color);
+	    
+	    public void drawRect(Rect r, int color);
 
 	    public void drawImage(Image image, int x, int y, int srcX, int srcY,
 	            int srcWidth, int srcHeight);

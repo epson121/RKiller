@@ -1,0 +1,207 @@
+package com.agame.rkiller;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.Log;
+
+import com.agame.framework.Game;
+import com.agame.framework.Graphics;
+import com.agame.framework.Image;
+import com.agame.framework.Input.TouchEvent;
+import com.agame.framework.Screen;
+
+public class GameScreen extends Screen {
+	
+	enum GameState {
+		Ready, Running, Paused, GameOver
+	}
+	GameState state = GameState.Running;
+	
+	private int randX, randY, randSpeedX, randSpeedY;
+	private Image roach;
+	private static Background b1;
+	private static List<Roach> roachList = new ArrayList<Roach>();
+	Random rand = new Random();
+	Paint paint;
+	public GameScreen(Game game) {
+		super(game);
+		
+		//initialize game objects
+		b1 = new Background(0, 0);
+		for (int i = 0; i < 5; i++){
+			randX = rand.nextInt(640);
+			randY = rand.nextInt(480);
+			randSpeedX = rand.nextInt(5) + 1;
+			randSpeedY = rand.nextInt(4) + 1;
+			roachList.add(new Roach(randX, randY));
+			roachList.get(i).setSpeed(randSpeedX, randSpeedY);
+		}
+		
+		roach = Assets.character_alive;
+		paint = new Paint();
+		paint.setTextSize(100);
+		paint.setTextAlign(Paint.Align.CENTER);
+		paint.setAntiAlias(true);
+		paint.setColor(Color.WHITE);
+		
+	}
+
+	@Override
+	public void update(float deltaTime) {
+		if (state == GameState.Running)
+			updateRunning();
+		if (state == GameState.Paused )
+			updatePaused();
+	}
+	
+	public void updateRunning(){
+		List touchEvents = game.getInput().getTouchEvents();
+		if (touchEvents.size() > 0){
+			for (int i = 0; i < touchEvents.size(); i++){
+				TouchEvent event = (TouchEvent) touchEvents.get(i);
+				if (event.type == TouchEvent.TOUCH_DOWN){
+					if (roachInBounds(event, roachList)){
+						Log.d("APP", "Roach dead");
+						roachList.remove(i);
+					}
+				}
+			}
+		}
+		for (int i = 0; i < roachList.size(); i++){
+			Roach r = roachList.get(i);
+			if (r.getCenterX() + 25 >= 640 || r.getCenterX() - 25 <= 0){
+				r.setSpeedX(r.getSpeedX() * -1);
+			}			
+			if (r.getCenterY() - 25 <= 0 || r.getCenterY() + 25 >= 480 ){
+				r.setSpeedY(r.getSpeedY() * -1);
+			}
+			r.update();
+		}
+		b1.update();
+	}
+	
+	public void updatePaused(){
+		List touchEvents = game.getInput().getTouchEvents();
+		if (touchEvents.size() > 0){
+			for (int i = 0; i < touchEvents.size(); i++){
+				TouchEvent event = (TouchEvent) touchEvents.get(i);
+				if (event.type == TouchEvent.TOUCH_DOWN){
+					if (inBounds(event, 0, 0, 800, 240)) {
+						if (!inBounds(event, 0, 0, 35, 35)) {
+							b1.update();
+							resume();
+						}
+					}
+					if (inBounds(event, 0, 240, 800, 240)) {
+						nullify();
+						goToMenu();
+					}
+				}
+			}
+		}
+		
+	}
+	
+	private boolean inBounds(TouchEvent event, int x, int y, int width, int height ){		
+		if (event.x > x && event.x < x + width - 1 && event.y > y
+				&& event.y < y + height - 1)
+			return true;
+		else
+			return false;
+	}
+	
+	private boolean roachInBounds(TouchEvent event, List<Roach> rList ){
+		int xLeft, xRight, yUp, yDown;
+		
+		for (int i = 0; i < rList.size(); i++){/*
+			xLeft = roachList.get(i).getCenterX() - 150;
+			xRight = roachList.get(i).getCenterX() + 150;
+			yUp = roachList.get(i).getCenterY() - 150;
+			yDown = roachList.get(i).getCenterY() + 150;
+			if (event.x >= xLeft && event.x <= xRight && event.y <= yDown && event.y >= yUp){
+				return true;
+			}
+			else{
+				return false;
+			}
+			*/
+			Rect r = new Rect(event.x - 25, event.y - 25, event.x + 25, event.y + 25);
+			
+			if (rList.get(i).rect.intersect(r)){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void paint(float deltaTime) {
+		Graphics g = game.getGraphics();
+
+		g.drawImage(Assets.background, b1.getBgX(), b1.getBgY());
+		
+		for (int i = 0; i < roachList.size(); i++){
+			Roach r = (Roach) roachList.get(i);
+			g.drawImage(roach, r.getCenterX() - 25, r.getCenterY() - 25);
+			g.drawRect(r.getCenterX() - 25, r.getCenterY() - 25, 50, 50, Color.BLUE);
+		}
+		
+		List touchEvents = game.getInput().getTouchEvents();
+		
+		if (state == GameState.Paused)
+			drawPausedState();
+	}
+	
+	public void drawPausedState(){
+		Graphics g = game.getGraphics();
+		// Darken the entire screen so you can display the Paused screen.
+		g.drawARGB(155, 0, 0, 0);
+		g.drawString("Resume", 400, 165, paint);
+		g.drawString("Menu", 400, 360, paint);
+	}
+	
+	@Override
+	public void pause() {
+		if (state == GameState.Running)
+			state = GameState.Paused;
+	}
+
+	@Override
+	public void resume() {
+		if (state == GameState.Paused)
+			state = GameState.Running;
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void backButton() {
+		pause();
+	}
+	
+	public void nullify(){
+		b1 = null;
+		state = null;
+		roach = null;
+		paint = null;
+		
+		System.gc();
+	}
+	
+	public void goToMenu(){
+		game.setScreen(new MainMenuScreen(game));
+	}
+
+}

@@ -6,10 +6,12 @@ public class Enemy {
 	
 	//TODO create setSpeed(speedX, speedY)
 	private int speedX, speedY, centerX, centerY, health;
+	public Rect rect;
 	
 	public void update(){
 		centerX += speedX;
 		centerY += speedY;
+		rect.offsetTo(centerX - 25, centerY - 25);
 	}
 	
 	public int getSpeedX() {
@@ -32,16 +34,8 @@ public class Enemy {
 		return centerX;
 	}
 
-	public void setCenterX(int centerX) {
-		this.centerX = centerX;
-	}
-
 	public int getCenterY() {
 		return centerY;
-	}
-
-	public void setCenterY(int centerY) {
-		this.centerY = centerY;
 	}
 
 	public int getHealth() {
@@ -50,5 +44,19 @@ public class Enemy {
 
 	public void setHealth(int health) {
 		this.health = health;
+	}
+	
+	public void setCenter(int centerX, int centerY){
+		this.centerX = centerX;
+		this.centerY = centerY;
+	}
+	
+	public void setSpeed(int speedX, int speedY){
+		this.speedX = speedX;
+		this.speedY = speedY;
+	}
+	
+	public void setRect(int centerX, int centerY){
+		rect = new Rect(centerX - 25, centerY - 25, centerX + 25, centerY + 25);
 	}
 }
